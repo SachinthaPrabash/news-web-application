@@ -6,8 +6,8 @@ import data from 'utils/data';
 const NewsScreen = () => {
 
     const { query } = useRouter();
-    const { heading } = query;
-    const news = data.news.find(x => x.heading === heading);
+    const { slug } = query;
+    const news = data.news.find(x => x.slug === slug);
     if (!news) {
         return <div>News not found</div>
     }
