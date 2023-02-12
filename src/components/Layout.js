@@ -1,13 +1,19 @@
-import { useSession } from 'next-auth/react'
+import { signOut, useSession } from 'next-auth/react'
 import Head from 'next/head'
 import Link from 'next/link'
 import React from 'react'
 import { ToastContainer } from 'react-toastify'
+import { Menu } from '@headlessui/react'
+
 
 
 const Layout = ({ title, children }) => {
 
     const { status, data: session } = useSession();
+
+    const logOutClickHandler = () => {
+        signOut({ callbackUrl: '/' })
+    }
 
     return (
         <>
@@ -29,7 +35,22 @@ const Layout = ({ title, children }) => {
                         <div>
                             {status === 'loading' ? (
                                 'Loading'
-                            ) : session?.user ? (session.user.name) :
+                            ) : session?.user ? (
+                                <Menu as='div' className='relative inline-block'>
+                                    <Menu.Button className='text-blue-400'>
+                                        {session.user.name}
+                                    </Menu.Button>
+                                    <Menu.Items className='absolute right-0 w-56 origin-top-right shadow-lg bg-white'>
+
+                                        <Menu.Item>
+                                            <Link className='flex p-2 hover:bg-gray-200' href='#' onClick={logOutClickHandler}>
+                                                LogOut
+                                            </Link>
+
+                                        </Menu.Item>
+                                    </Menu.Items>
+                                </Menu>
+                            ) :
                                 (
                                     <Link href='./Login'>
                                         Login

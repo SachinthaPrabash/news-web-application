@@ -1,15 +1,15 @@
 import Layout from '@/components/Layout';
+import News from 'Models/news';
 import { useRouter } from 'next/router'
 import React from 'react'
 import data from 'utils/data';
+import db from 'utils/db';
 
-const NewsScreen = () => {
+const NewsScreen = (props) => {
 
-    const { query } = useRouter();
-    const { slug } = query;
-    const news = data.news.find(x => x.slug === slug);
+    const { news } = props;
     if (!news) {
-        return <div>News not found</div>
+        return <Layout title="Product not Found">News not found</Layout>
     }
 
     return (
@@ -20,6 +20,20 @@ const NewsScreen = () => {
 
         </Layout>
     )
+}
+
+export async function getServerSideProps(context) {
+    const { params } = context;
+    const { slug } = params;
+    await db.connect();
+    const news = await News.findOne({ slug }).lean();
+    await db.disconnect();
+    return {
+        props: {
+            news: news ? db.convertDoctoObj(news) : null,
+        }
+    }
+
 }
 
 export default NewsScreen

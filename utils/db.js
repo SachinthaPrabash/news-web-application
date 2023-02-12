@@ -15,9 +15,9 @@ async function connect() {
         }
         await mongoose.disconnect();
     }
-
+    mongoose.set("strictQuery", false);
     const db = await mongoose.connect(process.env.MONGODB_URI)
-    console.log('NEW CONNECTION');
+    // console.log('NEW CONNECTION');
     connection.isConnected = db.connections[0].readyState;
 }
 
@@ -33,5 +33,12 @@ async function disconnect() {
     }
 }
 
-const db = { connect, disconnect }
+function convertDoctoObj(doc) {
+    doc._id = doc._id.toString();
+    doc.createdAt = doc.createdAt.toString();
+    doc.updatedAt = doc.updatedAt.toString();
+    return doc;
+}
+
+const db = { connect, disconnect, convertDoctoObj }
 export default db;

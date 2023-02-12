@@ -7,6 +7,7 @@ import { getError } from '../../utils/error'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/router'
 import { redirect } from 'next/dist/server/api-utils'
+import axios from 'axios'
 
 const login = () => {
 
@@ -23,11 +24,19 @@ const login = () => {
 
 
     const {
-        handleSubmit, register, formState: { errors },
+        handleSubmit,
+        register,
+        getValues,
+        formState: { errors },
     } = useForm();
 
-    const submitHandler = async ({ email, password }) => {
+    const submitHandler = async ({ name, email, password }) => {
         try {
+            await axios.post('./api/auth/Signup', {
+                name, email, password,
+            })
+
+
             const result = await signIn('credentials', {
                 redirect: false,
                 email,
@@ -36,17 +45,28 @@ const login = () => {
             if (result.error) {
                 toast.error(result.error)
             }
-        } catch (error) {
+        } catch (err) {
             toast.error(getError(err))
         }
     }
 
     return (
 
-        <Layout title='login'>
+        <Layout title='Register'>
             <form className='mx-auto max-w-screen-md' onSubmit={handleSubmit(submitHandler)}>
-                <h1 className='font-extrabold text-3xl '>Login</h1>
+                <h1 className='font-extrabold text-3xl '>Create Account</h1>
+
                 <div className='mb-4 mt-5'>
+                    <label htmlFor='name'>Name</label>
+                    <input className='border border-black w-full rounded-xl max-h-min p-2'
+                        {...register('name', {
+                            required: 'Plaease enter Name',
+                        })}
+                        type='text' id='name' />
+                    {errors.name && <div className='text-red-600'>{errors.name.message}</div>}
+                </div>
+
+                <div className='mb-4 '>
                     <label htmlFor='email'>Email</label>
                     <input className='border border-black w-full rounded-xl max-h-min p-2'
                         {...register('email', {
@@ -59,6 +79,7 @@ const login = () => {
                         type='email' id='email' />
                     {errors.email && <div className='text-red-600'>{errors.email.message}</div>}
                 </div>
+
                 <div className='mb-4'>
                     <label htmlFor='password'>password</label>
                     <input className='border border-black w-full rounded-xl max-h-min p-2'
@@ -69,12 +90,22 @@ const login = () => {
                         type='password' id='password' />
                     {errors.password && <div className='text-red-600'>{errors.password.message}</div>}
                 </div>
+
+
                 <div className='mb-4'>
-                    <button className='max-w-min max-h-min rounded-xl p-4 bg-cyan-500'>Login</button>
+                    <label htmlFor='confirmPassword'>Confirm Password</label>
+                    <input className='border border-black w-full rounded-xl max-h-min p-2'
+                        {...register('confirmPassword', {
+                            required: 'Plaease enter confirm password',
+                            validate: (value) => value === getValues('password'),
+                            minLength: { value: 4, message: 'password is more than 5 chars' }
+                        })}
+                        type='password' id='confirmPassword' />
+                    {errors.password && <div className='text-red-600'>{errors.password.message}</div>}
                 </div>
+
                 <div className='mb-4'>
-                    Don&apos;t have an account? &nbsp;
-                    <Link href={`./Register?redirect=${redirect || '/'}`}>Register</Link>
+                    <button className='max-w-min max-h-min rounded-xl p-4 bg-cyan-500'>Register</button>
                 </div>
             </form>
         </Layout>
