@@ -1,8 +1,14 @@
+import { useSession } from 'next-auth/react'
 import Head from 'next/head'
 import Link from 'next/link'
 import React from 'react'
+import { ToastContainer } from 'react-toastify'
+
 
 const Layout = ({ title, children }) => {
+
+    const { status, data: session } = useSession();
+
     return (
         <>
             <Head>
@@ -11,6 +17,9 @@ const Layout = ({ title, children }) => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
+
+            <ToastContainer position='bottom-center' limit={1} />
+
             <div className='flex min-h-screen flex-col justify-between'>
                 <header>
                     <nav className='flex h-12 justify-between p-4 shadow-md'>
@@ -18,9 +27,15 @@ const Layout = ({ title, children }) => {
                             Ada Drana
                         </Link>
                         <div>
-                            <Link href='./Login' className='p-2'>
-                                Login
-                            </Link>
+                            {status === 'loading' ? (
+                                'Loading'
+                            ) : session?.user ? (session.user.name) :
+                                (
+                                    <Link href='./Login'>
+                                        Login
+                                    </Link>
+                                )}
+
                         </div>
                     </nav>
                 </header>
