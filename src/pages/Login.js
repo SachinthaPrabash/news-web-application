@@ -17,7 +17,7 @@ const login = () => {
 
     useEffect(() => {
         if (session?.user) {
-            router.push(redirect || '/')
+            router.push(redirect || './')
         }
     }, [router, session, redirect])
 

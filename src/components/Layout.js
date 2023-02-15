@@ -42,6 +42,17 @@ const Layout = ({ title, children }) => {
                                     </Menu.Button>
                                     <Menu.Items className='absolute right-0 w-56 origin-top-right shadow-lg bg-white'>
 
+                                        {session.user.isAdmin && (
+                                            <Menu.Item>
+                                                <Link
+                                                    className='flex p-2 hover:bg-gray-200'
+                                                    href="./Admin/Dashboard"
+                                                >
+                                                    Admin Dashboard
+                                                </Link>
+                                            </Menu.Item>
+                                        )}
+
                                         <Menu.Item>
                                             <Link className='flex p-2 hover:bg-gray-200' href='#' onClick={logOutClickHandler}>
                                                 LogOut
